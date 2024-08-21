@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Produto } from '../models/Produto.model';
+import { ProdutoService } from '../produto.service';
 
 @Component({
   selector: 'app-inicio',
@@ -7,11 +8,30 @@ import { Router } from '@angular/router';
   styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit {
-  constructor(private router: Router) { }
+  
+  public produtos: Produto[] = []
 
-  ngOnInit(): void { }
+  constructor(private _produtoService: ProdutoService) {}
 
-  login() {
-    this.router.navigate(['/login']);
+  ngOnInit(): void {
+    this.listarProdutos();
+  }
+
+  listarProdutos():void{
+    this._produtoService.getProdutos().subscribe(
+      retornaProduto =>{
+        this.produtos = retornaProduto.map(
+          item => {
+            return new Produto(
+              item.id,
+              item.produto,
+              item.descricao,
+              item.foto,
+              item.preco
+            );
+          }
+        )
+      }
+    )
   }
 }
